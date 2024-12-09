@@ -1,0 +1,6 @@
+jobrunner:
+  image:
+    repository: redis-jobrunner
+    tag: main
+wikibase:
+  port: 80

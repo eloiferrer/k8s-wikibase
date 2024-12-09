@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-config
+data:
+  shared.cnf: |
+    [mariadb]
+    query_cache_size=64M
+    sort_buffer_size=4M
+    read_rnd_buffer_size=1M
+    performance_schema=ON
+    key_buffer_size=24M
+    innodb_buffer_pool_size=4G
+    innodb_log_file_size=32M   
+    max_connections=1000
+  primary.cnf: |
+    [mariadb]
+    log-bin
+    log-basename=mardb
+    log-bin-index=mardb-bin.index
+    sync_binlog=1
+  replica.cnf: |
+    [mariadb]
+    log-basename=mardb
+    read-only=1

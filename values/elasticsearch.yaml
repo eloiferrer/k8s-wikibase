@@ -1,0 +1,6 @@
+name: elasticsearch
+replicas: 1
+storage:
+  size: 5Gi
+javaOpts: "-Xms512m -Xmx512m"
+port: {{ .Values.elasticsearch.port }}

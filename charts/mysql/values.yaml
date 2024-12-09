@@ -1,0 +1,7 @@
+name: mysql
+image:
+  repository: mariadb
+  tag: 10.6
+storage:
+  size: 20Gi
+port: {{ .Values.mysql.port }}

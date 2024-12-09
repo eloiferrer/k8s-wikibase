@@ -1,0 +1,4 @@
+name: redis-jobrunner
+replicas: 1
+command: true
+maxJobs: 2

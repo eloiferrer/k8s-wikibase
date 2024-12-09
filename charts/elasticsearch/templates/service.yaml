@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch
+spec:
+  selector:
+    app: elasticsearch
+  ports:
+  - port: {{ .Values.port }}
+    targetPort: {{ .Values.port }}
+    name: http
+  - port: 9300
+    targetPort: 9300
+    name: transport
+  clusterIP: None

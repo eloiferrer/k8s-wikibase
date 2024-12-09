@@ -1,0 +1,37 @@
+image:
+  repository: redis
+  tag: "7"
+
+service:
+  ports:
+    redis: 6379
+
+architecture: standalone
+enabled: true
+
+master:
+  replicaCount: 1
+  persistence:
+    enabled: false
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+replica:
+  replicaCount: 0 # No additional replica instances
+
+metrics:
+  enabled: false
+
+networkPolicy:
+  enabled: false
+
+serviceAccount:
+  create: false
+
+auth:
+  enabled: false

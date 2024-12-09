@@ -1,0 +1,17 @@
+name: wikibase
+replicas: 1
+port: 80
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 512Mi
+  limits:
+    cpu: 1
+    memory: 1Gi
+
+mysql:
+  port: {{ .Values.mysql.port }}
+
+elasticsearch:
+  port: {{ .Values.elasticsearch.port }}

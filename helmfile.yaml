@@ -1,0 +1,43 @@
+helmDefaults:
+  values:
+    - production.yaml
+
+releases:
+  - name: shared-secrets
+    chart: ./shared-secrets
+
+  - name: wikibase
+    chart: ./wikibase
+    values:
+      - wikibase.yaml
+
+  - name: mysql-primary
+    chart: ./mysql
+    values:
+      - mysql.yaml
+
+  - name: mysql-replica
+    chart: ./mysql
+    values:
+      - mysql-replica.yaml
+
+  - name: redis
+    chart: bitnami/redis
+    values:
+      - redis.yaml
+
+  - name: redis-jobrunner
+    chart: ./jobrunner
+    values:
+      - values-jobrunner.yaml
+
+  - name: redis-rescheduler
+    chart: ./jobrunner
+    values:
+      - values-rescheduler.yaml
+
+  - name: redis-rescheduler
+    chart: ./jobrunner
+    values:
+      - values-rescheduler.yaml
+  

@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.name }}
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.name }}
+    spec:
+      initContainers:
+      - name: wait-for-mysql
+        image: busybox
+        command:
+        - 'sh'
+        - '-c'
+        - 'until nc -z mysql {{ .Values.mysql.port }}; do echo waiting for mysql; sleep 2; done;'
+      - name: wait-for-elasticsearch
+        image: busybox
+        command: 
+        - 'sh'
+        - '-c'
+        - 'until nc -z elasticsearch {{ .Values.elasticsearch.port }}; do echo waiting for elasticsearch; sleep 2; done;'
+      containers:
+      - name: {{ .Values.name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        resources:
+          requests:
+            cpu: {{ .Values.resources.requests.cpu }}
+            memory: {{ .Values.resources.requests.memory }}
+          limits:
+            cpu: {{ .Values.resources.limits.cpu }}
+            memory: {{ .Values.resources.limits.memory }}
+        ports:
+        - containerPort: {{ .Values.port }}
+        volumeMounts:
+        - name: localsettings
+          mountPath: /shared
+        - name: mediawiki-images
+          mountPath: /var/www/html/images
+        - name: apache-logs
+          mountPath: /var/log/apache2
+        envFrom:
+        - configMapRef:
+            name: wikibase-config
+        - secretRef:
+            name: wikibase-secrets
+      volumes:
+      - name: localsettings
+        persistentVolumeClaim:
+          claimName: localsettings-pvc
+      - name: mediawiki-images
+        persistentVolumeClaim:
+          claimName: mediawiki-images-pvc
+      - name: apache-logs
+        persistentVolumeClaim:
+          claimName: apache-logs-pvc

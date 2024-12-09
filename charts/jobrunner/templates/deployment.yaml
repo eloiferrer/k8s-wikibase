@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.name }}
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.name }}
+    spec:
+      initContainers:
+      - name: wait-for-wikibase
+        image: busybox
+        command: ['sh', '-c', 'until nc -z wikibase {{ .Values.wikibase.port }}; do echo waiting for wikibase; sleep 2; done;']
+      containers:
+      - name: {{ .Values.name }}
+        image: "{{ .Values.jobrunner.image.repository }}:{{ .Values.jobrunner.image.tag }}"
+        {{- if .Values.command }}
+        command: ["php"]
+        args: 
+        - "/jobrunner/redisJobRunnerService"
+        - "--config-file=/jobrunner/config.json"
+        {{- end }}
+        {{- if .Values.maxJobs }}
+        env:
+        - name: MAX_JOBS
+          value: {{ .Values.maxJobs | quote }}
+        {{- end }}
+        volumeMounts:
+        - name: localsettings
+          mountPath: /shared
+          readOnly: true
+      volumes:
+      - name: localsettings
+        persistentVolumeClaim:
+          claimName: localsettings-pvc
